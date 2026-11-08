@@ -39,7 +39,7 @@ def reverse_map_labels(mapped_labels: dict[str, int]) -> dict[int, str]:
 
 def dot_product(vec1: list[int], vec2: list[int]) -> int | None:
     """Calculates dot product of 2 vectors, if vectors do not have the same length None is returned"""
-    assert(len(vec1) == len(vec2), "Lengths of vectors must be the same")
+    assert len(vec1) == len(vec2), "Lengths of vectors must be the same"
     
     return sum(v1 * v2 for v1, v2 in zip(vec1, vec2))
 
@@ -89,13 +89,12 @@ def predict_rating(user_idx, movie_idx, user_matrix, similarity_matrix, top_k = 
        Returns None if prediction cannot be done (no similarities found for example)
     """
     
-    assert(top_k < len(user_matrix), "top_k must be less than len(user_matrix)")
+    assert top_k < len(user_matrix), "top_k must be less than len(user_matrix)"
     
     sim_vec = similarity_matrix[user_idx].copy()
     sim_vec[user_idx] = -10001000 #we do not want to compare ratings of ourselves
     
     top_k_users_idx = np.argsort(sim_vec, descending=True)[:top_k:]
-    top_k_users_ratings = [user_matrix[idx] for idx in top_k_users_idx if sim_vec[idx] >= min_similarity] #omit users with too low similarity
     
     valid_ratings = [ (user_matrix[idx][movie_idx], sim_vec[idx])
                         for idx in top_k_users_idx
@@ -114,7 +113,7 @@ def predict_rating(user_idx, movie_idx, user_matrix, similarity_matrix, top_k = 
     return prediction
     
     
-def return_recommendations(user_idx,user_matrix, sim_matrix, how_many=1) -> list[int]:
+def return_recommendations(user_idx,user_matrix, sim_matrix, how_many=1, min_similarity = 0.3) -> list[int]:
     """Returns list of indexes of recommended films for given user"""
     user_vector = user_matrix[user_idx]
     
@@ -122,7 +121,7 @@ def return_recommendations(user_idx,user_matrix, sim_matrix, how_many=1) -> list
     
     for movie_idx, rating in enumerate(user_vector):
         if rating == EMPTY_VALUE:
-            prediction = predict_rating(user_idx, movie_idx, user_matrix, sim_matrix, top_k=2, min_similarity=0.0)
+            prediction = predict_rating(user_idx, movie_idx, user_matrix, sim_matrix, top_k=2, min_similarity=0.3)
             if prediction is not None:  recommendations[movie_idx] = prediction
             
             
@@ -132,7 +131,7 @@ def return_recommendations(user_idx,user_matrix, sim_matrix, how_many=1) -> list
         reverse=True
     )[:how_many]
 
-    return [movie_idx for movie_idx, prediction in top_recommendations]
+    return [movie_idx for movie_idx, _ in top_recommendations]
             
     
             

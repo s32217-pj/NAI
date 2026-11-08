@@ -11,7 +11,7 @@ def main():
     labels_mapped = map_labels(all_labels)
     reverse_labels_mapping = reverse_map_labels(labels_mapped)
     
-    recommend = return_recommendations(0, user_matrix, sim_matrix, how_many=5)
+    recommend = return_recommendations(0, user_matrix, sim_matrix, how_many=5, min_similarity=0.2)
     
     #print(all_labels)
     #print(sim_matrix)
