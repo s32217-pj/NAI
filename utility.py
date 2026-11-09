@@ -11,9 +11,9 @@ def extract_json(filename: str):
     with open(filename, "r", encoding="utf-8") as f:
         data = json.load(f)
     
-    #convert all films to lower
+    #convert all films to lower case, users also
     return {
-        user: {
+        user.strip().lower(): {
             movie.strip().lower(): rating
             for movie, rating in ratings.items()
         }
@@ -28,6 +28,18 @@ def get_all_unique_labels(data) -> list[str]:
         for ratings in data.values()
         for name in ratings.keys()
     })
+    
+def get_all_users(data) -> list[str]:
+    """Get all unique usernames from data"""
+    return list({ name for name in data.keys() })
+
+def map_users(users: list[str]) -> dict[str, int]:
+    """Create users mapped into matrix rows."""
+    return {user: idx for idx, user in enumerate(users)}
+
+def reverse_map_users(mapped_users: dict[str, int]) -> dict[int, str]:
+    """Create reverse mapping from matrix rows to usernames"""
+    return { idx : user for idx, user in mapped_users.items()}
 
 def map_labels(labels: list[str]) -> dict[str, int]:
     """Create labels mapped into matrix columns."""
@@ -37,8 +49,8 @@ def reverse_map_labels(mapped_labels: dict[str, int]) -> dict[int, str]:
     """Create reverse mapping from matrix columns to labels."""
     return {idx: label for label, idx in mapped_labels.items()}
 
-def dot_product(vec1: list[int], vec2: list[int]) -> int | None:
-    """Calculates dot product of 2 vectors, if vectors do not have the same length None is returned"""
+def dot_product(vec1: list[int], vec2: list[int]) -> int:
+    """Calculates dot product of 2 vectors, if vectors do not have the same length error is thrown"""
     assert len(vec1) == len(vec2), "Lengths of vectors must be the same"
     
     return sum(v1 * v2 for v1, v2 in zip(vec1, vec2))
@@ -113,25 +125,43 @@ def predict_rating(user_idx, movie_idx, user_matrix, similarity_matrix, top_k = 
     return prediction
     
     
-def return_recommendations(user_idx,user_matrix, sim_matrix, how_many=1, min_similarity = 0.3) -> list[int]:
-    """Returns list of indexes of recommended films for given user"""
+def return_recommendations(user_idx,user_matrix, sim_matrix, min_similarity = 0.3) -> list[tuple[int, int]]:
+    """Returns tuple containing recommended films and their prediction that they will match user"""
     user_vector = user_matrix[user_idx]
     
     recommendations = {} #id : prediction, choose top k
     
     for movie_idx, rating in enumerate(user_vector):
         if rating == EMPTY_VALUE:
-            prediction = predict_rating(user_idx, movie_idx, user_matrix, sim_matrix, top_k=2, min_similarity=0.3)
+            prediction = predict_rating(user_idx, movie_idx, user_matrix, sim_matrix, top_k=2, min_similarity=min_similarity)
             if prediction is not None:  recommendations[movie_idx] = prediction
             
-            
+    return recommendations
+
+def return_best_recommendations(user_idx,user_matrix, sim_matrix, how_many=3, min_similarity = 0.3):
+    recommendations_all = return_recommendations(user_idx, user_matrix, sim_matrix, min_similarity)
+    
     top_recommendations = sorted(
-        recommendations.items(),
+        recommendations_all.items(),
         key=lambda item: item[1],
         reverse=True
     )[:how_many]
 
     return [movie_idx for movie_idx, _ in top_recommendations]
+
+def return_worst_recommendations(user_idx,user_matrix, sim_matrix, how_many=3, min_similarity = 0.3):
+    recommendations_all = return_recommendations(user_idx, user_matrix, sim_matrix, min_similarity)
+    
+    top_recommendations = sorted(
+        recommendations_all.items(),
+        key=lambda item: item[1],
+        reverse=False
+    )[:how_many]
+
+    return [movie_idx for movie_idx, _ in top_recommendations]
+    
+     
+     
             
     
             
