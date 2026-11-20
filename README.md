@@ -15,13 +15,13 @@ Jeśli program nie znajdzie nas w pliku napisze nam że nie ma takiego człowiek
 
 ## Propozycje dla Pana Oskara
 ### Pozytywna
-[Oskar pozytywnie](screenshot1.png)
+![Oskar pozytywnie](screenshot1.png)
 ### Negatywna
-[Oskar negatywnie](screenshot2.png)
+![Oskar negatywnie](screenshot2.png)
 
 ## Propozycje dla Pana Pawła
 ### Pozytywna
-[Oskar pozytywnie](screenshot3.png)
+![Oskar pozytywnie](screenshot3.png)
 ### Negatywna
-[Oskar negatywnie](screenshot4.png)
+![Oskar negatywnie](screenshot4.png)
 
