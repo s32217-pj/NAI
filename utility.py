@@ -159,20 +159,3 @@ def return_worst_recommendations(user_idx,user_matrix, sim_matrix, how_many=3, m
     )[:how_many]
 
     return [movie_idx for movie_idx, _ in top_recommendations]
-    
-     
-     
-            
-    
-            
-
-    
-    
-    
-    
-
-    
-    
-    
-
-        
